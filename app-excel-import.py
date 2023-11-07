@@ -25,6 +25,8 @@ my_creds = {
 	"database": os.environ["account_database"],
 	"warehouse": os.environ["account_warehouse"]
 }
+
+t_output_table_name = {}
 #
 # Function from Stackoverflow for flattening an XML document
 # 
@@ -53,25 +55,20 @@ def write_excel_to_table(input_file_name):
 
     the_time = datetime.now()
     the_date_suffix = the_time.strftime("%m%d%Y_%H_%M_%S")
-	# stage_name = "@XMLTEST"
-	# input_file_name = "books-sample.xml"
+
     output_table_name = "EXCEL_FILE_IMPORT"
     output_table_name = output_table_name + "_" + the_date_suffix
-    # file_url = "{}".format(input_file_name)
-    # with open(file_url, 'r', encoding='utf-8') as f:
-    #     excelcontent_read = f.read()
 
 
     # Create a pandas dataframe representing an initial flattened version of the XML input---more work to do
     # s = pd.read_excel(excelcontent_read)
     s = pd.read_excel(input_file_name, sheet_name=None)
 	
-    st.write(s)
-	
     for sheet in s:
         my_df = session.createDataFrame(s[sheet.title()])
-        t_output_table_name = output_table_name + "_" + str(sheet.title())
-        my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name, table_type='transient')
+        t_index = output_table_name + "_" + str(sheet.title())
+        t_output_table_name[t_index] = output_table_name + "_" + str(sheet.title())
+        my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name[t_index], table_type='transient')
     return t_output_table_name
 
 st.title("Excel Importer")
@@ -88,9 +85,10 @@ if ((uploaded_files)):
     for t_file in uploaded_files:
         if t_file is not None:
             # amt_of_data = t_file.getvalue()
-            t_name = write_excel_to_table(t_file)
-            t_df = m_session1.table(t_name)
-    st.dataframe(t_df.limit(25).toPandas())
+            t_arr = write_excel_to_table(t_file)
+            for t_table in t_arr:
+                t_df = m_session1.table(t_table)
+                st.dataframe(t_df.limit(25).toPandas())
 
 
 
