@@ -55,7 +55,7 @@ def write_excel_to_table(input_file_name):
     the_date_suffix = the_time.strftime("%m%d%Y_%H_%M_%S")
 
     output_table_name = os.environ["excel_table_prefix"]
-    output_table_name = output_table_name + "_" + the_date_suffix + "_SHEET_"
+    output_table_name = output_table_name + "_" + the_date_suffix + "_SHEET"
 
 
     # Get the number of dictionary keys that would result in a call to read_excel() with sheet_name=None
