@@ -58,12 +58,12 @@ def write_excel_to_table(input_file_name):
     output_table_name = output_table_name + "_" + the_date_suffix + "_SHEET_"
 
 
-    # Create a pandas dataframe representing an initial flattened version of the XML input---more work to do
-    # s = pd.read_excel(excelcontent_read)
-    # wb = xlrd.open_workbook(input_file_name)
-    s = pd.read_excel(input_file_name, sheet_name=None, )
-    n_sheets = len(s.keys())
+    # Get the number of dictionary keys that would result in a call to read_excel() with sheet_name=None
+    n_sheets = len(pd.read_excel(input_file_name, sheet_name=None).keys())
 
+    # Iterate through the sheets in the workbook, referencing them by index
+    # We are using this method because a call to read_excel() with sheet_name=None results
+    # in a problematic dictionary if any of the sheets have non-alphanumeric characters
     for i in range(n_sheets):
         s = pd.read_excel(input_file_name, sheet_name=i)
         i_name = "{}".format(i)
