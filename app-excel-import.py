@@ -8,11 +8,8 @@ from datetime import datetime
 import xmltodict
 import pandas as pd
 import os
-import sys
 import streamlit as st
-import re
-import xlrd
-from io import StringIO
+
 
 
 
@@ -65,18 +62,14 @@ def write_excel_to_table(input_file_name):
     # s = pd.read_excel(excelcontent_read)
     # wb = xlrd.open_workbook(input_file_name)
     s = pd.read_excel(input_file_name, sheet_name=None, )
-    # st.write("{}".format(len(s.keys())))
     n_sheets = len(s.keys())
 
     for i in range(n_sheets):
         s = pd.read_excel(input_file_name, sheet_name=i)
         i_name = "{}".format(i)
-        # if re.search(' ', i_name):
-        #       i_name = "{}".format(re.sub(' ', '_', sheet.title()))
         temp_df = s
         try:       
             my_df = session.createDataFrame(temp_df)
-            # my_df = session.createDataFrame(s[sheet.title()])
             t_index = output_table_name + "_" + i_name
             t_output_table_name[t_index] = output_table_name + "_" + i_name
             my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name[t_index], table_type='transient')
