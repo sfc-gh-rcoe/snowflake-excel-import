@@ -54,7 +54,7 @@ def write_excel_to_table(input_file_name):
     the_time = datetime.now()
     the_date_suffix = the_time.strftime("%m%d%Y_%H_%M_%S")
 
-    output_table_name = "EXCEL_FILE_IMPORT"
+    output_table_name = os.environ["excel_table_prefix"]
     output_table_name = output_table_name + "_" + the_date_suffix + "_SHEET_"
 
 
