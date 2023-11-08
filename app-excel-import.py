@@ -50,10 +50,10 @@ def write_excel_to_table(input_file_name):
 	#
     session = Session.builder.configs(my_creds).create()
 
-
     the_time = datetime.now()
     the_date_suffix = the_time.strftime("%m%d%Y_%H_%M_%S")
 
+    # Retrieve from the environment the name we want to use for our output table prefix
     output_table_name = os.environ["excel_table_prefix"]
     output_table_name = output_table_name + "_" + the_date_suffix + "_SHEET"
 
