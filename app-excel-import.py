@@ -10,8 +10,7 @@ import pandas as pd
 import os
 import sys
 import streamlit as st
-from io import StringIO
-import openpyxl
+import re
 
 
 
@@ -62,13 +61,20 @@ def write_excel_to_table(input_file_name):
 
     # Create a pandas dataframe representing an initial flattened version of the XML input---more work to do
     # s = pd.read_excel(excelcontent_read)
-    s = pd.read_excel(input_file_name, sheet_name=None)
-	
+    s = pd.read_excel(input_file_name, sheet_name=None, )
+
+    # st.write(s)
+    i = 0
     for sheet in s:
-        my_df = session.createDataFrame(s[sheet.title()])
-        t_index = output_table_name + "_" + str(sheet.title())
-        t_output_table_name[t_index] = output_table_name + "_" + str(sheet.title())
+        i_name = sheet.title()
+        if re.search(' ', i_name):
+              i_name = "{}".format(re.sub(' ', '_', sheet.title()))       
+        my_df = session.createDataFrame(pd.DataFrame(s[sheet.title()]))
+        # my_df = session.createDataFrame(s[sheet.title()])
+        t_index = output_table_name + "_" + i_name
+        t_output_table_name[t_index] = output_table_name + "_" + i_name
         my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name[t_index], table_type='transient')
+        i+=1
     return t_output_table_name
 
 st.title("Excel Importer")
