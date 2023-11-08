@@ -58,30 +58,30 @@ def write_excel_to_table(input_file_name):
     the_date_suffix = the_time.strftime("%m%d%Y_%H_%M_%S")
 
     output_table_name = "EXCEL_FILE_IMPORT"
-    output_table_name = output_table_name + "_" + the_date_suffix
+    output_table_name = output_table_name + "_" + the_date_suffix + "_SHEET_"
 
 
     # Create a pandas dataframe representing an initial flattened version of the XML input---more work to do
     # s = pd.read_excel(excelcontent_read)
     # wb = xlrd.open_workbook(input_file_name)
     s = pd.read_excel(input_file_name, sheet_name=None, )
-    # st.write(s)
-    i = 0
-    for sheet in s:
-        i_name = sheet.title()
-        st.write(i_name)
+    # st.write("{}".format(len(s.keys())))
+    n_sheets = len(s.keys())
+
+    for i in range(n_sheets):
+        s = pd.read_excel(input_file_name, sheet_name=i)
+        i_name = "{}".format(i)
         # if re.search(' ', i_name):
         #       i_name = "{}".format(re.sub(' ', '_', sheet.title()))
-        temp_df = s.get(i_name)
+        temp_df = s
         try:       
             my_df = session.createDataFrame(temp_df)
             # my_df = session.createDataFrame(s[sheet.title()])
             t_index = output_table_name + "_" + i_name
             t_output_table_name[t_index] = output_table_name + "_" + i_name
             my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name[t_index], table_type='transient')
-            i+=1
         except ValueError:
-              st.write("Skipping the sheet named: '{}'.  Pandas read_excel() dictionary creation problem.".format(i_name))
+            st.write("Skipping the sheet named: '{}'.  Pandas read_excel() dictionary creation problem.".format(i_name))
 
     return t_output_table_name
 
