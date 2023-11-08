@@ -11,6 +11,8 @@ import os
 import sys
 import streamlit as st
 import re
+import xlrd
+from io import StringIO
 
 
 
@@ -61,6 +63,7 @@ def write_excel_to_table(input_file_name):
 
     # Create a pandas dataframe representing an initial flattened version of the XML input---more work to do
     # s = pd.read_excel(excelcontent_read)
+    # wb = xlrd.open_workbook(input_file_name)
     s = pd.read_excel(input_file_name, sheet_name=None, )
     # st.write(s)
     i = 0
@@ -92,7 +95,10 @@ if ((uploaded_files)):
     for t_file in uploaded_files:
         if t_file is not None:
             # amt_of_data = t_file.getvalue()
-            t_arr = write_excel_to_table(t_file)
+            wb = xlrd.open_workbook(StringIO(t_file.getvalue().decode()), encoding_override='UTF-8')
+            t_arr = write_excel_to_table(wb)
+            # t_stringio = StringIO(t_file.getvalue().decode())
+            # t_arr = write_excel_to_table(t_stringio.read())
             for t_table in t_arr:
                 t_df = m_session1.table(t_table)
                 st.dataframe(t_df.limit(25).toPandas())
