@@ -62,14 +62,15 @@ def write_excel_to_table(input_file_name):
     # Create a pandas dataframe representing an initial flattened version of the XML input---more work to do
     # s = pd.read_excel(excelcontent_read)
     s = pd.read_excel(input_file_name, sheet_name=None, )
-
     # st.write(s)
     i = 0
     for sheet in s:
         i_name = sheet.title()
-        if re.search(' ', i_name):
-              i_name = "{}".format(re.sub(' ', '_', sheet.title()))       
-        my_df = session.createDataFrame(pd.DataFrame(s[sheet.title()]))
+        st.write(i_name)
+        # if re.search(' ', i_name):
+        #       i_name = "{}".format(re.sub(' ', '_', sheet.title()))
+        temp_df = s.get(i_name)       
+        my_df = session.createDataFrame(temp_df)
         # my_df = session.createDataFrame(s[sheet.title()])
         t_index = output_table_name + "_" + i_name
         t_output_table_name[t_index] = output_table_name + "_" + i_name
