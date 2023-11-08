@@ -72,13 +72,17 @@ def write_excel_to_table(input_file_name):
         st.write(i_name)
         # if re.search(' ', i_name):
         #       i_name = "{}".format(re.sub(' ', '_', sheet.title()))
-        temp_df = s.get(i_name)       
-        my_df = session.createDataFrame(temp_df)
-        # my_df = session.createDataFrame(s[sheet.title()])
-        t_index = output_table_name + "_" + i_name
-        t_output_table_name[t_index] = output_table_name + "_" + i_name
-        my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name[t_index], table_type='transient')
-        i+=1
+        temp_df = s.get(i_name)
+        try:       
+            my_df = session.createDataFrame(temp_df)
+            # my_df = session.createDataFrame(s[sheet.title()])
+            t_index = output_table_name + "_" + i_name
+            t_output_table_name[t_index] = output_table_name + "_" + i_name
+            my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name[t_index], table_type='transient')
+            i+=1
+        except ValueError:
+              st.write("Skipping the sheet named: '{}'.  Pandas read_excel() dictionary creation problem.".format(i_name))
+
     return t_output_table_name
 
 st.title("Excel Importer")
@@ -94,14 +98,13 @@ if ((uploaded_files)):
     l_df = m_session1.create_dataframe(data=[[1,2]], schema=['a', 'b'])
     for t_file in uploaded_files:
         if t_file is not None:
-            # amt_of_data = t_file.getvalue()
-            wb = xlrd.open_workbook(StringIO(t_file.getvalue().decode()), encoding_override='UTF-8')
-            t_arr = write_excel_to_table(wb)
-            # t_stringio = StringIO(t_file.getvalue().decode())
-            # t_arr = write_excel_to_table(t_stringio.read())
+            t_arr = write_excel_to_table(t_file)
             for t_table in t_arr:
-                t_df = m_session1.table(t_table)
-                st.dataframe(t_df.limit(25).toPandas())
+                try:
+                    t_df = m_session1.table(t_table)
+                    st.dataframe(t_df.limit(25).toPandas())
+                except:
+                    st.write("The table you tried to open doesn't exist.")
 
 
 
