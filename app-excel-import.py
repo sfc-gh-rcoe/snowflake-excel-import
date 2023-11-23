@@ -55,7 +55,7 @@ def write_excel_to_table(input_file_name):
 
     # Retrieve from the environment the name we want to use for our output table prefix
     output_table_name = os.environ["excel_table_prefix"]
-    output_table_name = output_table_name + "_" + the_date_suffix + "_SHEET"
+    output_table_name = output_table_name + "_{}_SHEET".format(the_date_suffix)
 
 
     # Get the number of dictionary keys that would result in a call to read_excel() with sheet_name=None
@@ -71,7 +71,7 @@ def write_excel_to_table(input_file_name):
         try:       
             my_df = session.createDataFrame(temp_df)
             t_index = output_table_name + "_" + i_name
-            t_output_table_name[t_index] = output_table_name + "_" + i_name
+            t_output_table_name[t_index] = output_table_name + "_{}".format(i_name)
             my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name[t_index], table_type='transient')
         except ValueError:
             st.write("Skipping the sheet named: '{}'.  Pandas read_excel() dictionary creation problem.".format(i_name))
@@ -95,6 +95,7 @@ if ((uploaded_files)):
             for t_table in t_arr:
                 try:
                     t_df = m_session1.table(t_table)
+                    st.write(t_table)
                     st.dataframe(t_df.limit(25).toPandas())
                 except:
                     st.write("The table you tried to open doesn't exist.")
