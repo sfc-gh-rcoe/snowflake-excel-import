@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 from collections import OrderedDict
 from datetime import datetime
 import xmltodict
-import pandas as pd
+import pandas
+import modin as pd
 import os
 import streamlit as st
 
