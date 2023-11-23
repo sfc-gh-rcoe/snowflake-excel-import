@@ -58,7 +58,7 @@ def write_excel_to_table(input_file_name):
 
     # Retrieve from the environment the name we want to use for our output table prefix
     output_table_name = os.environ["excel_table_prefix"]
-    output_table_name = output_table_name + "_" + the_date_suffix + "_SHEET"
+    output_table_name = output_table_name + "_{}_SHEET_".format(the_date_suffix)
 
 
     # Get the number of dictionary keys that would result in a call to read_excel() with sheet_name=None
@@ -78,7 +78,7 @@ def write_excel_to_table(input_file_name):
             #     my_df = session.createDataFrame(pl.DataFrame()._from_dict(temp_df))
             # else:
             my_df = session.createDataFrame(temp_df.to_pandas())
-            t_index = output_table_name + "_{}".format(re.sub(' ', '_', i))
+            t_index = output_table_name + "{}_{}".format(the_date_suffix, re.sub(' ', '_', i))
             t_output_table_name[t_index] = t_index
             my_df5 = my_df.write.mode("overwrite").save_as_table(table_name=t_output_table_name[t_index], table_type='transient')
             output_table_name = os.environ["excel_table_prefix"]
